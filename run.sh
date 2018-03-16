@@ -11,11 +11,42 @@ then
   NODE_PORT="7500"
 fi
 
-# Start mysql database
-mysqld &
+if [ "`echo ${MYSQL_ROOT_USER}`" == "" ]
+then
+  MYSQL_ROOT_USER="root"
+fi
 
-# wait for node to start
-sleep 5
+if [ "`echo ${MYSQL_ROOT_PASSWORD}`" == "" ]
+then
+  MYSQL_ROOT_PASSWORD="root"
+fi
+
+if [ "`echo ${MYSQL_MOGILE_DB}`" == "" ]
+then
+  MYSQL_MOGILE_DB="mogilefs"
+fi
+
+if [ "`echo ${MYSQL_MOGILE_USER}`" == "" ]
+then
+  MYSQL_MOGILE_USER="mogile"
+fi
+
+if [ "`echo ${MYSQL_MOGILE_PASSWORD}`" == "" ]
+then
+  MYSQL_MOGILE_PASSWORD="mogile"
+fi
+
+if [ "`echo ${MYSQL_MOGILE_HOST}`" == "" ]
+then
+  MYSQL_MOGILE_HOST="localhost"
+fi
+
+mogdbsetup --type=MySQL --yes --dbhost=${MYSQL_MOGILE_HOST} --dbrootuser=${MYSQL_ROOT_USER} --dbrootpass=${MYSQL_ROOT_PASSWORD} --dbname=${MYSQL_ROOT_PASSWORD} --dbuser=${MYSQL_MOGILE_USER} --dbpassword=${MYSQL_MOGILE_PASSWORD}
+
+sed -i "s/\MYSQL_MOGILE_HOST/${MYSQL_MOGILE_HOST}/g" /etc/mogilefs/mogilefsd.conf
+sed -i "s/\MYSQL_MOGILE_DB/${MYSQL_MOGILE_DB}/g" /etc/mogilefs/mogilefsd.conf
+sed -i "s/\MYSQL_MOGILE_USER/${MYSQL_MOGILE_USER}/g" /etc/mogilefs/mogilefsd.conf
+sed -i "s/\MYSQL_MOGILE_PASSWORD/${MYSQL_MOGILE_PASSWORD}/g" /etc/mogilefs/mogilefsd.conf
 
 sudo -u mogile mogilefsd --daemon -c /etc/mogilefs/mogilefsd.conf
 
