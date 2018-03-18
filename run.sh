@@ -41,12 +41,18 @@ then
   MYSQL_MOGILE_HOST="localhost"
 fi
 
-mogdbsetup --type=MySQL --yes --dbhost=${MYSQL_MOGILE_HOST} --dbrootuser=${MYSQL_ROOT_USER} --dbrootpass=${MYSQL_ROOT_PASSWORD} --dbname=${MYSQL_ROOT_PASSWORD} --dbuser=${MYSQL_MOGILE_USER} --dbpassword=${MYSQL_MOGILE_PASSWORD}
+if [ "`echo ${MYSQL_PORT}`" == "" ]
+then
+  MYSQL_PORT="3306"
+fi
+
+mogdbsetup --type=MySQL --yes --dbport=${MYSQL_PORT} --dbhost=${MYSQL_MOGILE_HOST} --dbrootuser=${MYSQL_ROOT_USER} --dbrootpass=${MYSQL_ROOT_PASSWORD} --dbname=${MYSQL_ROOT_PASSWORD} --dbuser=${MYSQL_MOGILE_USER} --dbpassword=${MYSQL_MOGILE_PASSWORD}
 
 sed -i "s/\MYSQL_MOGILE_HOST/${MYSQL_MOGILE_HOST}/g" /etc/mogilefs/mogilefsd.conf
 sed -i "s/\MYSQL_MOGILE_DB/${MYSQL_MOGILE_DB}/g" /etc/mogilefs/mogilefsd.conf
 sed -i "s/\MYSQL_MOGILE_USER/${MYSQL_MOGILE_USER}/g" /etc/mogilefs/mogilefsd.conf
 sed -i "s/\MYSQL_MOGILE_PASSWORD/${MYSQL_MOGILE_PASSWORD}/g" /etc/mogilefs/mogilefsd.conf
+sed -i "s/\MYSQL_MOGILE_PORT/${MYSQL_MOGILE_PORT}/g" /etc/mogilefs/mogilefsd.conf
 
 sudo -u mogile mogilefsd --daemon -c /etc/mogilefs/mogilefsd.conf
 
